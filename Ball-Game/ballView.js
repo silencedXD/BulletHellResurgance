@@ -72,6 +72,9 @@ class ballView {
         this.context.fill();
         this.context.strokeStyle = "#33DD33";
         this.context.stroke();
+        let car = new Image();
+        car.src="car.png";
+        this.context.drawImage(car, x, y);
     }
 
     drawBackground(lines, holes){

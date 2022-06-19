@@ -23,56 +23,58 @@ class ballModel {
         this.ballStartY = this.ballRadius * 2;
         this.ballX = this.ballStartX;
         this.ballY = this.ballStartY;
-        this.moveFactor = this.ballRadius * 0.2;
+        this.ballRotation = 0;
+        this.rotationFactor = 5;
+        this.ballMomentum = 0;
+        this.moveFactor = this.ballRadius * 0.1;
         this.ballSpeedX = 0;
         this.ballSpeedY = 0;
         this.ballAccelerationX = 0;
         this.ballAccelerationY = 0;
-        this.maxAcceleration = this.ballRadius * 0.1;
+        this.maxAcceleration = this.ballRadius * 0.3;
         this.maxSpeed = this.ballRadius * 0.25;
         this.decayRate = this.ballRadius * 0.01;
 
         this.pushLeft = () => {
-            if (model.ballX > model.ballRadius) {
-                if (model.ballAccelerationX > -model.maxAcceleration) {
-                    model.ballAccelerationX -= model.moveFactor;
-                }
+            if (this.ballRotation > this.rotationFactor)
+            {
+                this.ballRotation -= this.rotationFactor;
             }
+            else {
+                this.ballRotation = 360 + this.ballRotation - this.rotationFactor;
+            }
+            console.log("Rotation: "+this.ballRotation);
         };
 
         this.pushRight = () => {
-            if (model.ballX <= canvasLength - model.ballRadius) {
-                if (model.ballAccelerationX < model.maxAcceleration) {
-                    model.ballAccelerationX += model.moveFactor;
-                }
+            if (this.ballRotation < 360 - this.rotationFactor)
+            {
+                this.ballRotation += this.rotationFactor;
             }
+            else {
+                this.ballRotation = this.ballRotation + this.rotationFactor - 360;
+            }
+            console.log("Rotation: "+this.ballRotation);
         };
 
         this.pushUp = () => {
-            if (model.ballY > model.ballRadius) {
-                if (model.ballAccelerationY > -model.maxAcceleration) {
-                    model.ballAccelerationY -= model.moveFactor;
-                }
+            if (this.ballMomentum <= this.maxAcceleration - this.moveFactor){
+                this.ballMomentum += this.moveFactor;
+                console.log("Ball Momentum: "+this.ballMomentum);
             }
         };
 
         this.pushDown = () => {
-            if (model.ballY <= canvasLength - model.ballRadius) {
-                if (model.ballAccelerationY < model.maxAcceleration) {
-                    model.ballAccelerationY += model.moveFactor;
-                }
+            if (this.ballMomentum >= -this.maxAcceleration + this.moveFactor){
+                this.ballMomentum -= this.moveFactor;
+                console.log("Ball Momentum: "+this.ballMomentum);
             }
         };
-
-
-
-
 
 
         this.handleKeyDown = (event) => {
             this.keys = (this.keys || []);
             this.keys[event.keyCode] = true;
-            console.log(event.keyCode);
         };
         this.handleKeyUp = (event) => {
             this.keys[event.keyCode] = false;
@@ -262,6 +264,23 @@ class ballModel {
     }
 
     checkMovement(){
+
+        if (this.ballMomentum < 0.1 && this.ballMomentum > -0.1){
+            this.ballMomentum = 0;
+        }
+        else{
+            if (this.ballMomentum >= 0.01) {
+                this.ballMomentum -= this.decayRate;
+            } else if (this.ballMomentum <= -0.01){
+                this.ballMomentum += this.decayRate;
+            }
+            console.log("Ball Momentum: "+this.ballMomentum);
+        }
+
+
+
+
+
         if (this.ballAccelerationX >= 0.05 || this.ballAccelerationX <= -0.05) {
             if (Math.abs(this.ballSpeedX) < this.maxSpeed) {
                 this.ballSpeedX += this.ballAccelerationX;
