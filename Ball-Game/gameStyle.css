@@ -1,0 +1,15 @@
+*{
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+button{
+    height: 15vmin;
+    width: 15vmin;
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BulletHell Resurgance</title>
+    <link rel="stylesheet" type="text/css" href="normalize.css">
+    <link rel="stylesheet" type="text/css" href="gameStyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+</head>
+<body>
+
+<div id="content">
+
+    <div id="nav">
+
+        <h1>BulletHell Resurgance</h1>
+        <button class="btn" id="replayBallGame">REPLAY</button>
+
+    </div>
+
+    <div id="permMsg">
+        <p id="onscreenconsole2"></p>
+    </div>
+
+    <div id="buttons">
+        <button id="moveLeftButton">Left</button>
+        <button id="moveUpButton">Up</button>
+        <button id="moveRightButton">Right</button>
+        <button id="moveDownButton">Down</button>
+    </div>
+
+    <div id="gamePanel">
+        <canvas id="gameCanvas">
+
+        </canvas>
+    </div>
+
+</div>
+
+
+<script src="ballView.js"></script>
+<script src="ballModel.js"></script>
+<script src="ballController.js"></script>
+</body>
+</html>
