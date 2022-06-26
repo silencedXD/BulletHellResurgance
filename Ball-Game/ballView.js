@@ -65,16 +65,29 @@ class ballView {
     }
 
     drawNewFrame(x, y, r, lines, holes){
-        this.drawBackground(lines, holes);
-        this.context.fillStyle = "#00FF00";
+
+/*        this.context.fillStyle = "#00FF00";
         this.context.beginPath();
-        this.context.arc(x, y, r, 0, 2 * Math.PI);   //Draws ball
+        this.context.arc(0, 0, this.canvasLength/25, 0, 2 * Math.PI);   //Draws ball
         this.context.fill();
         this.context.strokeStyle = "#33DD33";
-        this.context.stroke();
+        this.context.stroke();*/
+
         let car = new Image();
         car.src="car.png";
-        this.context.drawImage(car, x, y);
+        let carSF = this.canvasLength/15;
+
+        this.context.save();
+        this.context.resetTransform();
+
+        this.context.translate(x +(car.width*2) / carSF, y +(car.height*2) / carSF);
+
+        this.context.rotate(Math.PI/180 * r);
+        this.context.drawImage(car, -(car.width*2) / carSF, -(car.height*2) / carSF, carSF, carSF);
+        this.context.restore();
+
+        this.drawBackground(lines, holes);
+        //this.context.drawImage(car, x, y, carSF, carSF);
     }
 
     drawBackground(lines, holes){

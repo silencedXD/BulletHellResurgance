@@ -9,7 +9,17 @@ html, body{
     overflow: hidden;
 }
 
+
 button{
     height: 15vmin;
     width: 15vmin;
+}
+
+#onscreenconsole2{
+    margin: 0;
+}
+
+#replayBallGame{
+    height: 8vmin;
+    width: 8vmin;
 }

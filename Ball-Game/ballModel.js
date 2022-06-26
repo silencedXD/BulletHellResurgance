@@ -19,21 +19,21 @@ class ballModel {
         let d = new Date();
         this.startTime = Math.round(d.getTime() / 1000);
         this.ballRadius = canvasLength / 50;
-        this.ballStartX = this.ballRadius * 2;
-        this.ballStartY = this.ballRadius * 2;
+        this.ballStartX = this.ballRadius * 10;
+        this.ballStartY = this.ballRadius * 10;
         this.ballX = this.ballStartX;
         this.ballY = this.ballStartY;
         this.ballRotation = 0;
         this.rotationFactor = 5;
         this.ballMomentum = 0;
-        this.moveFactor = this.ballRadius * 0.1;
+        this.moveFactor = this.ballRadius * 0.02;
         this.ballSpeedX = 0;
         this.ballSpeedY = 0;
         this.ballAccelerationX = 0;
         this.ballAccelerationY = 0;
-        this.maxAcceleration = this.ballRadius * 0.3;
+        this.maxAcceleration = this.ballRadius * 0.1;
         this.maxSpeed = this.ballRadius * 0.25;
-        this.decayRate = this.ballRadius * 0.01;
+        this.decayRate = this.maxAcceleration / 10;
 
         this.pushLeft = () => {
             if (this.ballRotation > this.rotationFactor)
@@ -58,17 +58,11 @@ class ballModel {
         };
 
         this.pushUp = () => {
-            if (this.ballMomentum <= this.maxAcceleration - this.moveFactor){
-                this.ballMomentum += this.moveFactor;
-                console.log("Ball Momentum: "+this.ballMomentum);
-            }
+            this.ballMomentum = 1;
         };
 
         this.pushDown = () => {
-            if (this.ballMomentum >= -this.maxAcceleration + this.moveFactor){
-                this.ballMomentum -= this.moveFactor;
-                console.log("Ball Momentum: "+this.ballMomentum);
-            }
+            this.ballMomentum = -1;
         };
 
 
@@ -78,6 +72,9 @@ class ballModel {
         };
         this.handleKeyUp = (event) => {
             this.keys[event.keyCode] = false;
+            if (event.keyCode === 87 || event.keyCode === 83){
+                this.ballMomentum = 0;
+            }
         };
         this.handleUp = () => {
             console.log("Up button Pressed!");
@@ -157,10 +154,28 @@ class ballModel {
     }
 
     getBallR(){
-        return this.ballRadius;
+        return this.ballRotation;
     }
 
+    getSpeedX(){
+        return this.ballSpeedX;
+    }
 
+    getSpeedY(){
+        return this.ballSpeedY;
+    }
+
+    getAccelerationX(){
+        return this.ballAccelerationX;
+    }
+
+    getAccelerationY(){
+        return this.ballAccelerationY;
+    }
+
+    getMomentum(){
+        return this.ballMomentum;
+    }
 
     checkCollisions(view){
         //Two circles are intersecting if the distance between their centre points is less than the sum of their radii
@@ -198,15 +213,15 @@ class ballModel {
                     let test = this.lines[i];
                     let test1 = test * view.getBlockUnit();
                     if (test1 < this.ballX) {
-                        this.ballX = this.ballRadius * 50 - this.ballRadius * 1.1;
+                        this.ballX = this.ballRadius * 50 - this.ballRadius * 1.1;      //Moves car from left side to the right side
                     } else {
-                        this.ballX = this.ballRadius * 1.1;
+                        this.ballX = this.ballRadius * 1.1;                             //Moves car from right side to the left side
                     }
                 } else {
                     if (this.lines[i + 1] * view.getBlockUnit() < this.ballY) {
-                        this.ballY = this.ballRadius * 50 - this.ballRadius * 1.1;
+                        this.ballY = this.ballRadius * 50 - this.ballRadius * 1.1;      //Moves car from top side to the bottom side
                     } else {
-                        this.ballY = this.ballRadius * 1.1;
+                        this.ballY = this.ballRadius * 1.1;                             //Moves car from bottom side to the top side
                     }
                 }
             }
@@ -264,22 +279,12 @@ class ballModel {
     }
 
     checkMovement(){
-
-        if (this.ballMomentum < 0.1 && this.ballMomentum > -0.1){
-            this.ballMomentum = 0;
+        if (this.ballAccelerationX < this.maxAcceleration){
+            this.ballAccelerationX += this.ballMomentum * this.moveFactor * Math.cos(Math.PI / 180 * (this.ballRotation - 90));
         }
-        else{
-            if (this.ballMomentum >= 0.01) {
-                this.ballMomentum -= this.decayRate;
-            } else if (this.ballMomentum <= -0.01){
-                this.ballMomentum += this.decayRate;
-            }
-            console.log("Ball Momentum: "+this.ballMomentum);
+        if (this.ballAccelerationY < this.maxAcceleration) {
+            this.ballAccelerationY += this.ballMomentum * this.moveFactor * Math.sin(Math.PI / 180 * (this.ballRotation - 90));
         }
-
-
-
-
 
         if (this.ballAccelerationX >= 0.05 || this.ballAccelerationX <= -0.05) {
             if (Math.abs(this.ballSpeedX) < this.maxSpeed) {
@@ -291,6 +296,7 @@ class ballModel {
                 this.ballAccelerationX += this.decayRate;
             }
         }
+
         if (this.ballSpeedX >= 0.05 || this.ballSpeedX <= -0.05) {
             this.ballX += this.ballSpeedX;
             if (this.ballSpeedX > 0) {
@@ -299,6 +305,7 @@ class ballModel {
                 this.ballSpeedX += this.decayRate;
             }
         }
+
 
         if (this.ballAccelerationY >= 0.05 || this.ballAccelerationY <= -0.05) {
             if (Math.abs(this.ballSpeedY) < this.maxSpeed) {
@@ -318,6 +325,7 @@ class ballModel {
                 this.ballSpeedY += this.decayRate;
             }
         }
+
     }
 
     checkKeyInputs(){
@@ -337,5 +345,30 @@ class ballModel {
             console.log("D pressed!");
             this.pushRight();
         }
+    }
+
+    checkOutOfBounds(){
+        if (this.ballX < -10){
+            this.ballX = this.ballRadius * 50 - this.ballRadius * 1.1;
+        }
+        if (this.ballY < -10){
+            this.ballY = this.ballRadius * 50 - this.ballRadius * 1.1;
+        }
+        if (this.ballX > view.getCanvasLength() + 10){
+            this.ballX = this.ballRadius * 1.1;
+        }
+        if (this.ballY > view.getCanvasLength() + 10){
+            this.ballY = this.ballRadius * 1.1;
+        }
+    }
+
+    resetCar(){
+        this.ballX = this.ballStartX;
+        this.ballY = this.ballStartY;
+        this.ballSpeedX = 0;
+        this.ballSpeedY = 0;
+        this.ballAccelerationX = 0;
+        this.ballAccelerationY = 0;
+        this.ballMomentum = 0;
     }
 }

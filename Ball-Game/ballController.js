@@ -24,20 +24,30 @@ const initialise = evt => {
             view.goTo("ballGame.html");
         });
 
-        const displayTime = function (startTime) {
+        const displayTimeAndStats = function (startTime) {
             return function() {
                 let d = new Date();
                 view.setContent("onscreenconsole2","Time: " + (Math.round(d.getTime() / 1000) - startTime));
+                view.setContent("statsScreen",
+                    "X: " + model.getBallX()+ "   "+
+                "Y: " + model.getBallY() + "<br>"+
+                    "Speed X: " + model.getSpeedX() + "   " +
+                    "Speed Y: " + model.getSpeedY() + "<br>"+
+                    "Acc X: " + model.getAccelerationX() + "   " +
+                    "Acc Y: " + model.getAccelerationY() + "<br>" +
+                    "Momentum: " + model.getMomentum()
+                    );
             };
         };
 
-        setInterval(displayTime(startTime), 1);
+        setInterval(displayTimeAndStats(startTime), 1);
 
 
         const gameLoop = function () {
             model.checkCollisions(view);
             model.checkKeyInputs();
             model.checkMovement();
+            model.checkOutOfBounds();
             view.updateFrame(model.getBallX(), model.getBallY(), model.getBallR(), model.getLines(), model.getHoles());
         };
 
@@ -62,7 +72,7 @@ const initialise = evt => {
         view.setupButtonHandlerWithType("moveRightButton", "mouseup", model.buttonReleaseX);
 
 
-        setInterval(gameLoop, 20);       //This checks for collisions and updates the screen at (roughly) 50 frames a second
+        setInterval(gameLoop, 25);       //This checks for collisions and updates the screen at (roughly) 40 frames a second
     }
 };
 
