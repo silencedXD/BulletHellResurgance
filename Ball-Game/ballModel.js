@@ -24,15 +24,15 @@ class ballModel {
         this.ballX = this.ballStartX;
         this.ballY = this.ballStartY;
         this.ballRotation = 0;
-        this.rotationFactor = 5;
+        this.rotationFactor = 3;
         this.ballMomentum = 0;
-        this.maxAcceleration = this.ballRadius * 0.1;
+        this.maxAcceleration = this.ballRadius * 0.2;
         this.moveFactor = this.maxAcceleration * 0.2;
         this.ballSpeedX = 0;
         this.ballSpeedY = 0;
         this.ballAccelerationX = 0;
         this.ballAccelerationY = 0;
-        this.maxSpeed = this.ballRadius * 0.3;
+        this.maxSpeed = this.ballRadius * 0.4;
         this.decayRate = this.maxAcceleration / 10;
 
         this.pushLeft = () => {
@@ -279,7 +279,7 @@ class ballModel {
     }
 
     checkMovement(){
-        if (this.ballAccelerationX < this.maxAcceleration){
+        if (Math.abs(this.ballAccelerationX) < this.maxAcceleration){
             this.ballAccelerationX += this.ballMomentum * this.moveFactor * Math.cos(Math.PI / 180 * (this.ballRotation - 90));
             if (this.ballAccelerationX > this.maxAcceleration){
                 this.ballAccelerationX = this.maxAcceleration;
@@ -288,7 +288,7 @@ class ballModel {
                 this.ballAccelerationX = -this.maxAcceleration;
             }
         }
-        if (this.ballAccelerationY < this.maxAcceleration) {
+        if (Math.abs(this.ballAccelerationY) < this.maxAcceleration) {
             this.ballAccelerationY += this.ballMomentum * this.moveFactor * Math.sin(Math.PI / 180 * (this.ballRotation - 90));
             if (this.ballAccelerationY > this.maxAcceleration){
                 this.ballAccelerationY = this.maxAcceleration;
@@ -298,7 +298,9 @@ class ballModel {
             }
         }
 
-        if (Math.abs(this.ballAccelerationX) >= this.maxAcceleration/200) {
+        let zeroAtValue = 20;       //Value for determining when to turn tiny floating points to 0 to ensure car gets to an eventual stop
+
+        if (Math.abs(this.ballAccelerationX) >= this.maxAcceleration/zeroAtValue) {
             if (Math.abs(this.ballSpeedX) < this.maxSpeed) {
                 this.ballSpeedX += this.ballAccelerationX;
                 if (this.ballSpeedX > this.maxSpeed){
@@ -318,7 +320,7 @@ class ballModel {
             this.ballAccelerationX = 0;
         }
 
-        if (Math.abs(this.ballSpeedX) >= this.maxSpeed/200) {
+        if (Math.abs(this.ballSpeedX) >= this.maxSpeed/zeroAtValue) {
             this.ballX += this.ballSpeedX;
             if (this.ballSpeedX > 0) {
                 this.ballSpeedX -= this.decayRate;
@@ -330,7 +332,7 @@ class ballModel {
             this.ballSpeedX = 0;
         }
 
-        if (Math.abs(this.ballAccelerationY) >= this.maxAcceleration/200) {
+        if (Math.abs(this.ballAccelerationY) >= this.maxAcceleration/zeroAtValue) {
             if (Math.abs(this.ballSpeedY) < this.maxSpeed) {
                 this.ballSpeedY += this.ballAccelerationY;
                 if (this.ballSpeedY > this.maxSpeed){
@@ -349,13 +351,13 @@ class ballModel {
         else{
             this.ballAccelerationY = 0;
         }
-        if (Math.abs(this.ballSpeedY) >= this.maxSpeed/200) {
+        if (Math.abs(this.ballSpeedY) >= this.maxSpeed/zeroAtValue) {
             this.ballY += this.ballSpeedY;
-            if (this.ballSpeedY > 0) {
+/*            if (this.ballSpeedY > 0) {
                 this.ballSpeedY -= this.decayRate;
             } else {
                 this.ballSpeedY += this.decayRate;
-            }
+            }*/
         }
         else{
             this.ballSpeedY = 0;

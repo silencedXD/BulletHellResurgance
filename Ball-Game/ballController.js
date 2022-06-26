@@ -72,7 +72,7 @@ const initialise = evt => {
         view.setupButtonHandlerWithType("moveRightButton", "mouseup", model.buttonReleaseX);
 
 
-        setInterval(gameLoop, 25);       //This checks for collisions and updates the screen at (roughly) 40 frames a second
+        setInterval(gameLoop, 20);       //This checks for collisions and updates the screen at (roughly) 50 frames a second
     }
 };
 

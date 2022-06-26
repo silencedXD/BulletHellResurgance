@@ -75,15 +75,15 @@ class ballView {
 
         let car = new Image();
         car.src="car.png";
-        let carSF = this.canvasLength/15;
+        let carWidth = this.canvasLength/15;
+        let carHeight = this.canvasLength/10;
 
         this.context.save();
         this.context.resetTransform();
-
-        this.context.translate(x +(car.width*2) / carSF, y +(car.height*2) / carSF);
-
+        this.context.translate(x + (car.width*2) / carWidth, y + (car.height*2) / (carHeight/2));
+        //this.context.drawImage(car, -(car.width*2.5) / carWidth, -(car.height*6) / carHeight, carWidth, carHeight);
         this.context.rotate(Math.PI/180 * r);
-        this.context.drawImage(car, -(car.width*2) / carSF, -(car.height*2) / carSF, carSF, carSF);
+        this.context.drawImage(car, -(car.width*2.5) / carWidth, -(car.height*6) / carHeight, carWidth, carHeight);
         this.context.restore();
 
         this.drawBackground(lines, holes);
