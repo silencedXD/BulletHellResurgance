@@ -26,13 +26,13 @@ class ballModel {
         this.ballRotation = 0;
         this.rotationFactor = 5;
         this.ballMomentum = 0;
-        this.moveFactor = this.ballRadius * 0.02;
+        this.maxAcceleration = this.ballRadius * 0.1;
+        this.moveFactor = this.maxAcceleration * 0.2;
         this.ballSpeedX = 0;
         this.ballSpeedY = 0;
         this.ballAccelerationX = 0;
         this.ballAccelerationY = 0;
-        this.maxAcceleration = this.ballRadius * 0.1;
-        this.maxSpeed = this.ballRadius * 0.25;
+        this.maxSpeed = this.ballRadius * 0.3;
         this.decayRate = this.maxAcceleration / 10;
 
         this.pushLeft = () => {
@@ -181,7 +181,7 @@ class ballModel {
         //Two circles are intersecting if the distance between their centre points is less than the sum of their radii
         //I've reduced the hitbox size by using slightly less than the sum of the radii
         let distance_from_goal = Math.sqrt((this.ballX - view.getBlockUnit() * this.holes[this.holes.length-2]) * (this.ballX - view.getBlockUnit() * this.holes[this.holes.length-2]) + (this.ballY - view.getBlockUnit() * this.holes[this.holes.length-1]) * (this.ballY - view.getBlockUnit() * this.holes[this.holes.length-1]));
-        if (distance_from_goal <= (this.ballRadius + view.getHoleRadius())) {
+        /*if (distance_from_goal <= (this.ballRadius + view.getHoleRadius())) {
             let d = new Date();
             localStorage.finishTime = Math.round(d.getTime() / 1000) - this.startTime;
 
@@ -202,7 +202,7 @@ class ballModel {
             }
 
             view.goTo("ballWin.html");
-        }
+        }*/
 
 
         for (let i = 0; i < this.lines.length; i += 4) {
@@ -281,14 +281,32 @@ class ballModel {
     checkMovement(){
         if (this.ballAccelerationX < this.maxAcceleration){
             this.ballAccelerationX += this.ballMomentum * this.moveFactor * Math.cos(Math.PI / 180 * (this.ballRotation - 90));
+            if (this.ballAccelerationX > this.maxAcceleration){
+                this.ballAccelerationX = this.maxAcceleration;
+            }
+            if (this.ballAccelerationX < -this.maxAcceleration){
+                this.ballAccelerationX = -this.maxAcceleration;
+            }
         }
         if (this.ballAccelerationY < this.maxAcceleration) {
             this.ballAccelerationY += this.ballMomentum * this.moveFactor * Math.sin(Math.PI / 180 * (this.ballRotation - 90));
+            if (this.ballAccelerationY > this.maxAcceleration){
+                this.ballAccelerationY = this.maxAcceleration;
+            }
+            if (this.ballAccelerationY < -this.maxAcceleration){
+                this.ballAccelerationY = -this.maxAcceleration;
+            }
         }
 
-        if (this.ballAccelerationX >= 0.05 || this.ballAccelerationX <= -0.05) {
+        if (Math.abs(this.ballAccelerationX) >= this.maxAcceleration/200) {
             if (Math.abs(this.ballSpeedX) < this.maxSpeed) {
                 this.ballSpeedX += this.ballAccelerationX;
+                if (this.ballSpeedX > this.maxSpeed){
+                    this.ballSpeedX = this.maxSpeed;
+                }
+                if (this.ballSpeedX < -this.maxSpeed){
+                    this.ballSpeedX = -this.maxSpeed;
+                }
             }
             if (this.ballAccelerationX > 0) {
                 this.ballAccelerationX -= this.decayRate;
@@ -296,8 +314,11 @@ class ballModel {
                 this.ballAccelerationX += this.decayRate;
             }
         }
+        else{
+            this.ballAccelerationX = 0;
+        }
 
-        if (this.ballSpeedX >= 0.05 || this.ballSpeedX <= -0.05) {
+        if (Math.abs(this.ballSpeedX) >= this.maxSpeed/200) {
             this.ballX += this.ballSpeedX;
             if (this.ballSpeedX > 0) {
                 this.ballSpeedX -= this.decayRate;
@@ -305,11 +326,19 @@ class ballModel {
                 this.ballSpeedX += this.decayRate;
             }
         }
+        else{
+            this.ballSpeedX = 0;
+        }
 
-
-        if (this.ballAccelerationY >= 0.05 || this.ballAccelerationY <= -0.05) {
+        if (Math.abs(this.ballAccelerationY) >= this.maxAcceleration/200) {
             if (Math.abs(this.ballSpeedY) < this.maxSpeed) {
                 this.ballSpeedY += this.ballAccelerationY;
+                if (this.ballSpeedY > this.maxSpeed){
+                    this.ballSpeedY = this.maxSpeed;
+                }
+                if (this.ballSpeedY < -this.maxSpeed){
+                    this.ballSpeedY = -this.maxSpeed;
+                }
             }
             if (this.ballAccelerationY > 0) {
                 this.ballAccelerationY -= this.decayRate;
@@ -317,7 +346,10 @@ class ballModel {
                 this.ballAccelerationY += this.decayRate;
             }
         }
-        if (this.ballSpeedY >= 0.05 || this.ballSpeedY <= -0.05) {
+        else{
+            this.ballAccelerationY = 0;
+        }
+        if (Math.abs(this.ballSpeedY) >= this.maxSpeed/200) {
             this.ballY += this.ballSpeedY;
             if (this.ballSpeedY > 0) {
                 this.ballSpeedY -= this.decayRate;
@@ -325,7 +357,9 @@ class ballModel {
                 this.ballSpeedY += this.decayRate;
             }
         }
-
+        else{
+            this.ballSpeedY = 0;
+        }
     }
 
     checkKeyInputs(){
