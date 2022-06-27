@@ -31,11 +31,12 @@ const initialise = evt => {
                 view.setContent("statsScreen",
                     "X: " + model.getBallX()+ "   "+
                 "Y: " + model.getBallY() + "<br>"+
-                    "Speed X: " + model.getSpeedX() + "   " +
-                    "Speed Y: " + model.getSpeedY() + "<br>"+
-                    "Acc X: " + model.getAccelerationX() + "   " +
-                    "Acc Y: " + model.getAccelerationY() + "<br>" +
-                    "Momentum: " + model.getMomentum()
+                    "S X: " + model.getSpeedX() + "   " +
+                    "S Y: " + model.getSpeedY() + "<br>"+
+                    "A X: " + model.getAccelerationX() + "   " +
+                    "A Y: " + model.getAccelerationY() + "<br>" +
+                    "Momentum: " + model.getMomentum() + "   " +
+                    "Rotation: " + model.getBallR()
                     );
             };
         };

@@ -9,6 +9,10 @@ html, body{
     overflow: hidden;
 }
 
+body{
+    margin: 0;
+}
+
 
 button{
     height: 15vmin;
@@ -17,6 +21,9 @@ button{
 
 #onscreenconsole2{
     margin: 0;
+}
+#statsScreen{
+    font-size: 80%;
 }
 
 #replayBallGame{

@@ -75,19 +75,33 @@ class ballView {
 
         let car = new Image();
         car.src="car.png";
-        let carWidth = this.canvasLength/15;
-        let carHeight = this.canvasLength/10;
+        let carSF = this.canvasLength/5000;
+        let centreX = car.width/2;
+        let centreY = car.height/2;
+
+
+/*        for (let i = 0; i < this.canvasLength; i+=4){
+            this.context.moveTo(i, 0);
+            this.context.lineTo(i, this.canvasLength);
+            this.context.moveTo(0, i);
+            this.context.lineTo(this.canvasLength, i);
+        }
+        this.context.lineWidth=1;
+        this.context.strokeStyle = "#3fc1c9";
+        this.context.stroke();*/
+
+
 
         this.context.save();
-        this.context.resetTransform();
-        this.context.translate(x + (car.width*2) / carWidth, y + (car.height*2) / (carHeight/2));
-        //this.context.drawImage(car, -(car.width*2.5) / carWidth, -(car.height*6) / carHeight, carWidth, carHeight);
+
+        this.context.translate(x, y);
         this.context.rotate(Math.PI/180 * r);
-        this.context.drawImage(car, -(car.width*2.5) / carWidth, -(car.height*6) / carHeight, carWidth, carHeight);
+        this.context.scale(carSF,carSF);
+
+        this.context.drawImage(car, -centreX, -centreY, car.width, car.height);
         this.context.restore();
 
         this.drawBackground(lines, holes);
-        //this.context.drawImage(car, x, y, carSF, carSF);
     }
 
     drawBackground(lines, holes){

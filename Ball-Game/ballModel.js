@@ -28,6 +28,7 @@ class ballModel {
         this.ballMomentum = 0;
         this.maxAcceleration = this.ballRadius * 0.2;
         this.moveFactor = this.maxAcceleration * 0.2;
+        this.currentSpeed = 0;
         this.ballSpeedX = 0;
         this.ballSpeedY = 0;
         this.ballAccelerationX = 0;
@@ -279,6 +280,7 @@ class ballModel {
     }
 
     checkMovement(){
+/*
         if (Math.abs(this.ballAccelerationX) < this.maxAcceleration){
             this.ballAccelerationX += this.ballMomentum * this.moveFactor * Math.cos(Math.PI / 180 * (this.ballRotation - 90));
             if (this.ballAccelerationX > this.maxAcceleration){
@@ -297,70 +299,72 @@ class ballModel {
                 this.ballAccelerationY = -this.maxAcceleration;
             }
         }
+*/
 
         let zeroAtValue = 20;       //Value for determining when to turn tiny floating points to 0 to ensure car gets to an eventual stop
 
-        if (Math.abs(this.ballAccelerationX) >= this.maxAcceleration/zeroAtValue) {
-            if (Math.abs(this.ballSpeedX) < this.maxSpeed) {
-                this.ballSpeedX += this.ballAccelerationX;
-                if (this.ballSpeedX > this.maxSpeed){
-                    this.ballSpeedX = this.maxSpeed;
+        // if (Math.abs(this.ballAccelerationX) >= this.maxAcceleration/zeroAtValue) {
+            if (Math.abs(this.currentSpeed) < this.maxSpeed) {
+                this.currentSpeed += this.ballMomentum * this.moveFactor;
+                if (this.currentSpeed > this.maxSpeed){
+                    this.currentSpeed = this.maxSpeed;
                 }
-                if (this.ballSpeedX < -this.maxSpeed){
-                    this.ballSpeedX = -this.maxSpeed;
+                if (this.currentSpeed < -this.maxSpeed){
+                    this.currentSpeed = -this.maxSpeed;
                 }
             }
-            if (this.ballAccelerationX > 0) {
-                this.ballAccelerationX -= this.decayRate;
-            } else {
-                this.ballAccelerationX += this.decayRate;
-            }
-        }
-        else{
-            this.ballAccelerationX = 0;
-        }
+        //     if (this.ballAccelerationX > 0) {
+        //         this.ballAccelerationX -= this.decayRate;
+        //     } else {
+        //         this.ballAccelerationX += this.decayRate;
+        //     }
+        // }
+        // else{
+        //     this.ballAccelerationX = 0;
+        // }
 
-        if (Math.abs(this.ballSpeedX) >= this.maxSpeed/zeroAtValue) {
-            this.ballX += this.ballSpeedX;
-            if (this.ballSpeedX > 0) {
-                this.ballSpeedX -= this.decayRate;
-            } else {
-                this.ballSpeedX += this.decayRate;
-            }
-        }
-        else{
-            this.ballSpeedX = 0;
-        }
+        // if (Math.abs(this.ballSpeedX) >= this.maxSpeed/zeroAtValue) {
+        //     this.ballX += this.ballSpeedX;
+        //     if (this.ballSpeedX > 0) {
+        //         this.ballSpeedX -= this.decayRate;
+        //     } else {
+        //         this.ballSpeedX += this.decayRate;
+        //     }
+        // }
+        // else{
+        //     this.ballSpeedX = 0;
+        // }
 
-        if (Math.abs(this.ballAccelerationY) >= this.maxAcceleration/zeroAtValue) {
-            if (Math.abs(this.ballSpeedY) < this.maxSpeed) {
-                this.ballSpeedY += this.ballAccelerationY;
-                if (this.ballSpeedY > this.maxSpeed){
-                    this.ballSpeedY = this.maxSpeed;
-                }
-                if (this.ballSpeedY < -this.maxSpeed){
-                    this.ballSpeedY = -this.maxSpeed;
-                }
-            }
-            if (this.ballAccelerationY > 0) {
-                this.ballAccelerationY -= this.decayRate;
+        // if (Math.abs(this.ballAccelerationY) >= this.maxAcceleration/zeroAtValue) {
+        //     if (Math.abs(this.ballSpeedY) < this.maxSpeed) {
+        //         this.ballSpeedY += this.ballMomentum * this.moveFactor;
+        //         if (this.ballSpeedY > this.maxSpeed){
+        //             this.ballSpeedY = this.maxSpeed;
+        //         }
+        //         if (this.ballSpeedY < -this.maxSpeed){
+        //             this.ballSpeedY = -this.maxSpeed;
+        //         }
+        //     }
+        //     if (this.ballAccelerationY > 0) {
+        //         this.ballAccelerationY -= this.decayRate;
+        //     } else {
+        //         this.ballAccelerationY += this.decayRate;
+        //     }
+        // }
+        // else{
+        //     this.ballAccelerationY = 0;
+        // }
+        if (Math.abs(this.currentSpeed) >= this.maxSpeed/zeroAtValue) {
+            this.ballX += this.currentSpeed * Math.cos(Math.PI / 180 * (this.ballRotation - 90));
+            this.ballY += this.currentSpeed * Math.sin(Math.PI / 180 * (this.ballRotation - 90));
+            if (this.currentSpeed > 0) {
+                this.currentSpeed -= this.decayRate;
             } else {
-                this.ballAccelerationY += this.decayRate;
+                this.currentSpeed += this.decayRate;
             }
         }
         else{
-            this.ballAccelerationY = 0;
-        }
-        if (Math.abs(this.ballSpeedY) >= this.maxSpeed/zeroAtValue) {
-            this.ballY += this.ballSpeedY;
-/*            if (this.ballSpeedY > 0) {
-                this.ballSpeedY -= this.decayRate;
-            } else {
-                this.ballSpeedY += this.decayRate;
-            }*/
-        }
-        else{
-            this.ballSpeedY = 0;
+            this.currentSpeed = 0;
         }
     }
 
