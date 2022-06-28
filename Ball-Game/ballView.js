@@ -6,18 +6,18 @@ class ballView {
         let pageName = currentPage.pop();                         //Which only needs some buttons to be setup
         if (pageName === "ballGame.html") {
             this.canvas = document.getElementById("gameCanvas");
-            this.canvasLength = 0;  //This value is used for calculating how big everything should appear on the screen
+            this.canvasLength = 0;                                  //This value is used for calculating how big everything should appear on the screen
             if (window.innerWidth > window.innerHeight) {
                 this.canvasLength = window.innerHeight;
             } else {
                 this.canvasLength = window.innerWidth;
             }
-            this.canvasLength *= 0.9;
+            this.canvasLength *= 0.9;                               //This ensures the whole canvas fits onscreen (phone cameras ect)
             this.canvas.width = this.canvasLength;
             this.canvas.height = this.canvasLength;
             this.context = this.canvas.getContext("2d");
             this.context.lineWidth = 4;
-            this.blockUnit = this.canvasLength / 5;
+            this.blockUnit = this.canvasLength / 5;                 //This is a unit that divides the canvas into 5, used for custom coordinates for drawing
             this.holeRadius = this.canvasLength / 37;
 
         }
@@ -35,11 +35,7 @@ class ballView {
         return this.holeRadius;
     }
 
-    setupButtonHandler(id, handler) {
-        document.getElementById(id).addEventListener("click", handler);
-    }
-
-    setupButtonHandlerWithType(id, type, handler){
+    setupButtonHandler(id, type, handler){
         document.getElementById(id).addEventListener(type, handler);
     }
 
@@ -79,27 +75,12 @@ class ballView {
         let centreX = car.width/2;
         let centreY = car.height/2;
 
-
-/*        for (let i = 0; i < this.canvasLength; i+=4){
-            this.context.moveTo(i, 0);
-            this.context.lineTo(i, this.canvasLength);
-            this.context.moveTo(0, i);
-            this.context.lineTo(this.canvasLength, i);
-        }
-        this.context.lineWidth=1;
-        this.context.strokeStyle = "#3fc1c9";
-        this.context.stroke();*/
-
-
-
-        this.context.save();
-
-        this.context.translate(x, y);
-        this.context.rotate(Math.PI/180 * r);
-        this.context.scale(carSF,carSF);
-
+        this.context.save();                    //Default is saved
+        this.context.translate(x, y);           //Canvas is moved to player position
+        this.context.rotate(Math.PI/180 * r);   //Canvas is rotated
+        this.context.scale(carSF * 0.75,carSF); //Canvas is scaled to size of the player
         this.context.drawImage(car, -centreX, -centreY, car.width, car.height);
-        this.context.restore();
+        this.context.restore();                 //Transformations are reset to default
 
         this.drawBackground(lines, holes);
     }
