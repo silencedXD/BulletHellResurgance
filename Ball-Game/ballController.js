@@ -29,13 +29,16 @@ const initialise = evt => {
         const displayTimeAndStats = function (startTime) {      //Dev tool which displays stats in realtime for debugging
             return function() {
                 let d = new Date();
-                view.setContent("onscreenconsole2","Time: " + (Math.round(d.getTime() / 1000) - startTime));
+                let player1 = model.getPlayer();
+                view.setContent("onscreenconsole2","Time: " + (Math.round(d.getTime() / 1000) - startTime)
+                                    + "        Score: " + player1.getScore() + "     Lives: " + player1.getLives());
                 view.setContent("statsScreen",
-                    "X: " + model.getBallX()+ "   "+
-                    "Y: " + model.getBallY() + "<br>"+
-                    "Speed: " + model.getSpeed() + "   " +
-                    "Momentum: " + model.getMomentum() + "   " +
-                    "Rotation: " + model.getBallR()
+                    "X: " + player1.getX()+ "   "+
+                    "Y: " + player1.getY() + "<br>"+
+                    "Speed: " + player1.getSpeed() + "   " +
+                    "Momentum: " + player1.getMomentum() + "   " +
+                    "Rotation: " + player1.getRotation() + "   " +
+                    "Max Speed: " + player1.getMaxSpeed()
                     );
             };
         };
@@ -44,11 +47,12 @@ const initialise = evt => {
 
 
         const gameLoop = function () {
-            model.checkCollisions(view);
             model.checkKeyInputs();
-            model.checkMovement();
-            model.checkOutOfBounds();
-            view.updateFrame(model.getBallX(), model.getBallY(), model.getBallR(), model.getLines(), model.getHoles());
+            model.checkMovement(model.getPlayer());
+            model.checkSpawners();
+            model.checkProjectiles();
+            model.checkCollisions(view);
+            view.updateFrame(model.getPlayer(), model.getLines(), model.getSpawners(), model.getProjectiles());
         };
 
         view.setupEventHandler("keydown", model.handleKeyDown);

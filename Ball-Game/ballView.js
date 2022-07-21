@@ -55,37 +55,68 @@ class ballView {
         return window.location.pathname;
     }
 
-    updateFrame(ballX, ballY, ballRadius, lines, holes){
+    updateFrame(player1, lines, spawners, projectiles){
         this.context.clearRect(0, 0, this.canvasLength, this.canvasLength);        //This clears the canvas
-        this.drawNewFrame(ballX, ballY, ballRadius, lines, holes);
+        this.drawNewFrame(player1, lines, spawners, projectiles);
     }
 
-    drawNewFrame(x, y, r, lines, holes){
+    drawNewFrame(player1, lines, spawners, projectiles){
 
-/*        this.context.fillStyle = "#00FF00";
-        this.context.beginPath();
-        this.context.arc(0, 0, this.canvasLength/25, 0, 2 * Math.PI);   //Draws ball
-        this.context.fill();
-        this.context.strokeStyle = "#33DD33";
-        this.context.stroke();*/
+
 
         let car = new Image();
         car.src="car.png";
-        let carSF = this.canvasLength/5000;
-        let centreX = car.width/2;
-        let centreY = car.height/2;
+
+        let carSF = player1.getRadius() / 10;
+        //let carSF = this.canvasLength/4000;
+        //let carSF = this.canvasLength/3000;
+
+
+        //let carSF = this.canvasLength/5000 * player1.getRadius(); //Player size scales with how many lives they have
+        let centreX = car.width/2;//1 life = 7500, 2 lives = 5000, 3 lives = 2500
+        let centreY = car.height/2;//1 life = 5000, 2 lives = 2500, 3 lives =
 
         this.context.save();                    //Default is saved
-        this.context.translate(x, y);           //Canvas is moved to player position
-        this.context.rotate(Math.PI/180 * r);   //Canvas is rotated
-        this.context.scale(carSF * 0.75,carSF); //Canvas is scaled to size of the player
+        this.context.translate(player1.getX(), player1.getY());           //Canvas is moved to player position
+        this.context.rotate(Math.PI/180 * player1.getRotation());   //Canvas is rotated
+        this.context.scale(carSF,carSF); //Canvas is scaled to size of the player
         this.context.drawImage(car, -centreX, -centreY, car.width, car.height);
         this.context.restore();                 //Transformations are reset to default
 
-        this.drawBackground(lines, holes);
+        this.context.fillStyle = "#00FF00";
+        this.context.beginPath();
+        this.context.arc(player1.getX(), player1.getY(), player1.getRadius(), 0, 2 * Math.PI);   //Draws ball
+        this.context.fill();
+        this.context.strokeStyle = "#33DD33";
+        this.context.stroke();
+
+        this.drawEnemies(spawners, projectiles)
+
+        this.drawBackground(lines);
     }
 
-    drawBackground(lines, holes){
+    drawEnemies(spawners, projectiles){
+        this.context.fillStyle = "#b1184c";
+        this.context.strokeStyle = "#7e1236";
+
+
+        //All of the projectile spawners are stored in an array of spawner objects, the same is true for projectiles
+        for (let i = 0; i < spawners.length; i++) {    //This adds the projectile spawners
+            this.drawHole(spawners[i].getX(), spawners[i].getY(), spawners[i].getRadius());
+        }
+
+        this.context.fillStyle = "#22AA22";
+        this.context.strokeStyle = "#009900";
+
+        for (let i = 0; i < projectiles.length; i++) {    //This adds the projectile spawners
+            this.drawHole(projectiles[i].getX()/this.blockUnit, projectiles[i].getY()/this.blockUnit, projectiles[i].getRadius());
+        }
+        /*        this.context.fillStyle = "#CCCCCC";
+                this.context.strokeStyle = "#888888";
+                this.drawHole(spawners[spawners.length-2], spawners[spawners.length-1]);    */                   //This adds the goal hole
+    }
+
+    drawBackground(lines, spawners){
         //All the walls are stored in an array as 4 coordinates, this adds all of them to the canvas
         for (let i = 0; i < lines.length; i += 4) {
             this.drawLine(lines[i], lines[i + 1], lines[i + 2], lines[i + 3]);
@@ -93,19 +124,6 @@ class ballView {
 
         this.context.strokeStyle = "#3fc1c9";
         this.context.stroke();
-
-        this.context.fillStyle = "#b1184c";
-        this.context.strokeStyle = "#7e1236";
-
-
-        //All of the trap holes are stored in an array as 2 coordinates as they all have the same radius
-        for (let i = 0; i < holes.length-2; i += 2) {    //This adds the trap holes
-            this.drawHole(holes[i], holes[i + 1]);
-        }
-
-        this.context.fillStyle = "#CCCCCC";
-        this.context.strokeStyle = "#888888";
-        this.drawHole(holes[holes.length-2], holes[holes.length-1]);                       //This adds the goal hole
     }
 
     drawLine(x1, y1, x2, y2){
@@ -113,9 +131,9 @@ class ballView {
         this.context.lineTo(this.blockUnit * x2, this.blockUnit * y2);
     }
 
-    drawHole(x, y){
+    drawHole(x, y, r){
         this.context.beginPath();
-        this.context.arc(this.blockUnit * x, this.blockUnit * y, this.holeRadius, 0, Math.PI * 2);
+        this.context.arc(this.blockUnit * x, this.blockUnit * y, r, 0, Math.PI * 2);
         this.context.fill();
         this.context.stroke();
     }
