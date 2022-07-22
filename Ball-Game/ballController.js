@@ -6,9 +6,6 @@ let model, view;
 
 const initialise = evt => {
 
-    let d = new Date();
-    let startTime = Math.round(d.getTime() / 1000);         //Logs time at page load (converted from milliseconds to seconds)
-
     view = new ballView();
     model = new ballModel(view.getCanvasLength());              //The model object needs the view to be instantiated first as
                                                                 //the view stores the canvas. The model needs to know the canvas size
@@ -18,7 +15,7 @@ const initialise = evt => {
     let pageName = currentPage.pop();                         //Which only needs some buttons to be setup
     if (pageName === "ballGameHome.html") {
         view.setupButtonHandler('ballButton',"click", () => {
-            view.goTo("ballGame.html");
+            view.goTo(" ballGame.html");
         });
     }
     else {                                                      //Otherwise the game page is setup
@@ -26,12 +23,11 @@ const initialise = evt => {
             view.goTo("ballGame.html");
         });
 
-        const displayTimeAndStats = function (startTime) {      //Dev tool which displays stats in realtime for debugging
+
+        const displayStats = function () {      //Dev tool which displays stats in realtime for debugging
             return function() {
-                let d = new Date();
                 let player1 = model.getPlayer();
-                view.setContent("onscreenconsole2","Time: " + (Math.round(d.getTime() / 1000) - startTime)
-                                    + "        Score: " + player1.getScore() + "     Lives: " + player1.getLives());
+                view.setContent("onscreenconsole2", "Score: " + player1.getScore() + "     Lives: " + player1.getLives());
                 view.setContent("statsScreen",
                     "X: " + player1.getX()+ "   "+
                     "Y: " + player1.getY() + "<br>"+
@@ -43,7 +39,7 @@ const initialise = evt => {
             };
         };
 
-        setInterval(displayTimeAndStats(startTime), 1);
+        let statDisplayID = setInterval(displayStats(), 1);
 
 
         const gameLoop = function () {
@@ -76,7 +72,25 @@ const initialise = evt => {
         view.setupButtonHandler("moveRightButton", "mouseup", model.buttonReleaseX);
 
 
-        setInterval(gameLoop, 20);       //This checks for collisions and updates the screen at (roughly) 50 frames a second
+        let gameLoopID = setInterval(gameLoop, 20);       //This checks for collisions and updates the screen at (roughly) 50 frames a second
+        const pauseGame = function(){
+            clearInterval(statDisplayID);
+            clearInterval(gameLoopID);
+            view.pauseGame();
+            localStorage.pauseFlag = 1;
+        };
+        localStorage.pauseFlag = 0;
+        const resumeGame = function(){
+            if (localStorage.pauseFlag === "1") {
+                statDisplayID = setInterval(displayStats(), 1);
+                gameLoopID = setInterval(gameLoop, 20);
+                view.resumeGame();
+                localStorage.pauseFlag = 0;
+            }
+        };
+        view.setupButtonHandler('pauseButton', "click", pauseGame);
+
+        view.setupButtonHandler('resumeButton', "click", resumeGame);
     }
 };
 

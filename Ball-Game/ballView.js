@@ -5,6 +5,7 @@ class ballView {
         let currentPage = this.getCurrentPage().split('/');//This checks if the user is on the homepage
         let pageName = currentPage.pop();                         //Which only needs some buttons to be setup
         if (pageName === "ballGame.html") {
+            document.getElementById("pauseScreen").style.display = 'none';
             this.canvas = document.getElementById("gameCanvas");
             this.canvasLength = 0;                                  //This value is used for calculating how big everything should appear on the screen
             if (window.innerWidth > window.innerHeight) {
@@ -96,8 +97,8 @@ class ballView {
     }
 
     drawEnemies(spawners, projectiles){
-        this.context.fillStyle = "#b1184c";
-        this.context.strokeStyle = "#7e1236";
+        this.context.fillStyle = "#771877";
+        this.context.strokeStyle = "#661266";
 
 
         //All of the projectile spawners are stored in an array of spawner objects, the same is true for projectiles
@@ -105,10 +106,17 @@ class ballView {
             this.drawHole(spawners[i].getX(), spawners[i].getY(), spawners[i].getRadius());
         }
 
-        this.context.fillStyle = "#22AA22";
-        this.context.strokeStyle = "#009900";
+
 
         for (let i = 0; i < projectiles.length; i++) {    //This adds the projectile spawners
+            if (projectiles[i].isPoint()){
+                this.context.fillStyle = "#22AA22";
+                this.context.strokeStyle = "#009900";
+            }
+            else{
+                this.context.fillStyle = "#aa1144";
+                this.context.strokeStyle = "#bb0022";
+            }
             this.drawHole(projectiles[i].getX()/this.blockUnit, projectiles[i].getY()/this.blockUnit, projectiles[i].getRadius());
         }
         /*        this.context.fillStyle = "#CCCCCC";
@@ -136,5 +144,15 @@ class ballView {
         this.context.arc(this.blockUnit * x, this.blockUnit * y, r, 0, Math.PI * 2);
         this.context.fill();
         this.context.stroke();
+    }
+
+    pauseGame(){
+        document.getElementById("gamePanel").style.display = 'none';
+        document.getElementById("pauseScreen").style.display = 'block';
+    }
+
+    resumeGame(){
+        document.getElementById("gamePanel").style.display = 'block';
+        document.getElementById("pauseScreen").style.display = 'none';
     }
 }

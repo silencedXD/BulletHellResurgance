@@ -4,7 +4,7 @@ class player{
     constructor(canvasLength) {
         this.playerLives = 3;
         this.canvasLength = canvasLength
-        this.playerRadius = this.canvasLength / 60 * this.playerLives;
+        this.playerRadius = this.canvasLength / 70 * this.playerLives;
         this.playerStartX = this.playerRadius * 5;
         this.playerStartY = this.playerRadius * 5;
         this.playerX = this.playerStartX;
@@ -38,7 +38,7 @@ class player{
     setMomentum(m){this.playerMomentum = m;}
     takeDamage(){
         this.playerLives--;
-        this.playerRadius = this.canvasLength / 60 * this.playerLives;
+        this.playerRadius = this.canvasLength / 70 * this.playerLives;
         this.maxSpeed = Math.round(this.playerRadius * 1000 / (this.playerLives * this.playerLives))/1000;  //Radius changes so speed changes
         //Speed is inversely proportional to lives, we want more speed with less lives
     }
@@ -47,10 +47,13 @@ class player{
         this.playerY += this.currentSpeed * Math.sin(Math.PI / 180 * (this.playerRotation - 90));
     }
     decaySpeed(){
-        if (this.currentSpeed > 0) {
+        if (this.currentSpeed > this.maxSpeed / 10) {
             this.currentSpeed -= this.decayRate;
-        } else {
+        } else if (this.currentSpeed < -this.maxSpeed / 10){
             this.currentSpeed += this.decayRate;
+        }
+        else{
+            this.currentSpeed = 0;
         }
     }
     updateSpeed(){
@@ -64,6 +67,8 @@ class player{
     }
 
     setSpeed(x){this.currentSpeed = x;}
+
+    addPoint(){this.playerScore += 50;}
 
     rotateLeft(){
         if (this.playerRotation > this.rotationFactor)
@@ -102,11 +107,13 @@ class spawner{                                  //The spawner uses the blockUnit
         this.radius = r;
         this.spawnCounter = 0;
         this.spawnDelay = 10;
-        this.patterns = [[0,90,180,270],[45,135,225,315]];
+        this.patterns = [[0,45,90,135,180,225,270,315], [22, 67, 112, 157, 202, 247, 292, 337]];
+        this.rotation = 0;
         this.currentPattern = [];
         this.projectiles = projList;
         this.blockUnit = canvasLength / 5;
     }
+    //patterns: wiggle, wave,
 
     getX(){return this.xPos;}
     getY(){return this.yPos;}
@@ -126,15 +133,23 @@ class spawner{                                  //The spawner uses the blockUnit
     }
 
     spawn(){
-        if (this.currentPattern.length === 0){
+        if (this.spawnCounter === 10){
             this.chooseNewPattern()
+            this.spawnCounter = 0;
         }      //If the current pattern has been finished, it will choose a new pattern
-        console.log("Current projectiles: " + this.projectiles);
-        console.log("Current pattern left: " + this.currentPattern);
-        this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern.pop(),this.getRadius()/2));
-        console.log("Current pattern left: " + this.currentPattern);
-        console.log("Current projectiles: " + this.projectiles);
-        this.spawnCounter = 0;
+        this.rotation += Math.floor(Math.random() * 3 - 1) * 5;
+
+        while (this.currentPattern.length > 0){
+            let temp = Math.floor(Math.random() * 20);
+            if (temp < 1){
+                this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern.pop() + this.rotation,this.getRadius()/2,true));
+            }
+            else{
+                this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern.pop() + this.rotation,this.getRadius()/2,false));
+            }
+        }
+        this.incrementSpawnCounter();
+
         console.log("Spawn counter: " + this.spawnCounter)
     }
 
@@ -148,17 +163,19 @@ class spawner{                                  //The spawner uses the blockUnit
 }
 
 class projectile{
-    constructor(x,y,direction,r) {
+    constructor(x,y,direction,r,isAPoint) {
         this.xPos = x;
         this.yPos = y;
         this.direction = direction;
         this.radius = r;
+        this.isAPoint = isAPoint;
     }
 
     getX(){return this.xPos;}
     getY(){return this.yPos;}
     getRadius(){return this.radius;}
     isEnemy(){return true;}
+    isPoint(){return this.isAPoint;}
 
     setX(x){this.xPos = x;}
     setY(y){this.yPos = y;}
@@ -170,11 +187,10 @@ class projectile{
 
 class ballModel {
     constructor(canvasLength) {
-
         this.projectiles = [];
         //new projectile(50,50,90,canvasLength/40, 0)
         this.spawners = [  //Contains all spawner objects
-            new spawner(2.5,2.5,canvasLength / 35, this.projectiles, canvasLength)];
+            new spawner(2.5,2.5,canvasLength / 45, this.projectiles, canvasLength)];
 
         this.lines = [
             0, 5, 5, 5,
@@ -182,17 +198,11 @@ class ballModel {
             0, 0, 5, 0,
             0, 0, 0, 5,];  //Contains all the line coordinates
 
-        if (isNaN(localStorage.playerLongestTime)){
-            localStorage.playerLongestTime = 0;
-        }
         if (isNaN(localStorage.playerHighScore)){
             localStorage.playerHighScore = 0;
         }
-        localStorage.playerCurrentTime = 0;
         localStorage.playerCurrentScore = 0;
 
-        let d = new Date();
-        this.startTime = Math.round(d.getTime() / 1000);
         this.player1 = new player(canvasLength);
 
         //The functions for turning and moving forwards and backwards have been decoupled from keyDown event handlers
@@ -308,9 +318,6 @@ class ballModel {
             if (distance_between_centres <= sum_of_radii) {
                 if (this.player1.getLives() > 1){this.player1.takeDamage();}
                 else{
-                    let d = new Date();
-
-                    localStorage.playerCurrentTime = Math.round(d.getTime() / 1000) - this.startTime;
                     localStorage.playerCurrentScore = this.player1.getScore();
 
                     view.goTo("ballWin.html");
@@ -325,19 +332,22 @@ class ballModel {
             let distance_between_centres = Math.sqrt((this.player1.getX() - proj.getX()) * (this.player1.getX() - proj.getX()) + (this.player1.getY() - proj.getY()) * (this.player1.getY() - proj.getY()));
             let sum_of_radii = this.player1.getRadius() + proj.getRadius();
             if (distance_between_centres <= sum_of_radii) {
-                if (this.player1.getLives() > 1){
-                    this.player1.takeDamage();
+                if (proj.isPoint()) {
+                    this.player1.addPoint();
                     delete this.projectiles[i];
-                    this.projectiles.splice(i,1);
+                    this.projectiles.splice(i, 1);
                     i--;
-                }
-                else{
-                    let d = new Date();
+                } else {
+                    if (this.player1.getLives() > 1) {
+                        this.player1.takeDamage();
+                        delete this.projectiles[i];
+                        this.projectiles.splice(i, 1);
+                        i--;
+                    } else {
+                        localStorage.playerCurrentScore = this.player1.getScore();
 
-                    localStorage.playerCurrentTime = Math.round(d.getTime() / 1000) - this.startTime;
-                    localStorage.playerCurrentScore = this.player1.getScore();
-
-                    view.goTo("ballWin.html");
+                        view.goTo("ballWin.html");
+                    }
                 }
             }
         }
