@@ -27,15 +27,15 @@ const initialise = evt => {
         const displayStats = function () {      //Dev tool which displays stats in realtime for debugging
             return function() {
                 let player1 = model.getPlayer();
-                view.setContent("onscreenconsole2", "Score: " + player1.getScore() + "     Lives: " + player1.getLives());
-                view.setContent("statsScreen",
+                view.setContent("onscreenconsole2","Lives: " + player1.getLives() + "      Score: " + player1.getScore());
+/*                view.setContent("statsScreen",
                     "X: " + player1.getX()+ "   "+
                     "Y: " + player1.getY() + "<br>"+
                     "Speed: " + player1.getSpeed() + "   " +
                     "Momentum: " + player1.getMomentum() + "   " +
                     "Rotation: " + player1.getRotation() + "   " +
                     "Max Speed: " + player1.getMaxSpeed()
-                    );
+                    );*/            //Onscreen stats for debugging and testing
             };
         };
 

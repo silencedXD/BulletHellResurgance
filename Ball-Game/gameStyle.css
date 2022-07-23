@@ -15,7 +15,7 @@ body{
 
 
 button{
-    height: 15vmin;
+    height: 8vmin;
     width: 15vmin;
 }
 
@@ -28,5 +28,9 @@ button{
 
 #replayBallGame{
     height: 8vmin;
-    width: 8vmin;
+    width: 15vmin;
+}
+
+#ballWinScreen{
+    font-size: 300%;
 }

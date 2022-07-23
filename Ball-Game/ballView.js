@@ -84,12 +84,12 @@ class ballView {
         this.context.drawImage(car, -centreX, -centreY, car.width, car.height);
         this.context.restore();                 //Transformations are reset to default
 
-        this.context.fillStyle = "#00FF00";
+/*        this.context.fillStyle = "#00FF00";
         this.context.beginPath();
         this.context.arc(player1.getX(), player1.getY(), player1.getRadius(), 0, 2 * Math.PI);   //Draws ball
         this.context.fill();
         this.context.strokeStyle = "#33DD33";
-        this.context.stroke();
+        this.context.stroke();*/        //This draws a ball using the player's radius, displays player hitbox
 
         this.drawEnemies(spawners, projectiles)
 
