@@ -45,6 +45,7 @@ const initialise = evt => {
         const gameLoop = function () {
             model.checkKeyInputs();
             model.checkMovement(model.getPlayer());
+            model.checkPlayerStatus();
             model.checkSpawners();
             model.checkProjectiles();
             model.checkCollisions(view);

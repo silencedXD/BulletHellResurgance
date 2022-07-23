@@ -4,7 +4,7 @@ class player{
     constructor(canvasLength) {
         this.playerLives = 3;
         this.canvasLength = canvasLength
-        this.playerRadius = this.canvasLength / 70 * this.playerLives;
+        this.playerRadius = this.canvasLength / 60 * Math.sqrt(this.playerLives);
         this.playerStartX = this.playerRadius * 5;
         this.playerStartY = this.playerRadius * 5;
         this.playerX = this.playerStartX;
@@ -14,9 +14,10 @@ class player{
         this.playerMomentum = 0;
         this.moveFactor = this.playerRadius / 10;
         this.currentSpeed = 0;
-        this.maxSpeed = Math.round(this.playerRadius * 1000 / (this.playerLives * this.playerLives))/1000; //Rounded to 4sf
+        this.maxSpeed = Math.round(this.playerRadius * 1000 / this.playerLives / 2)/1000; //Rounded to 4sf
         this.decayRate = this.playerRadius / 25;
         this.playerScore = 0;
+        this.iFrames = 0;
     }
 
     getLives(){return this.playerLives;}
@@ -37,10 +38,12 @@ class player{
     setY(y){this.playerY = y;}
     setMomentum(m){this.playerMomentum = m;}
     takeDamage(){
-        this.playerLives--;
-        this.playerRadius = this.canvasLength / 70 * this.playerLives;
-        this.maxSpeed = Math.round(this.playerRadius * 1000 / (this.playerLives * this.playerLives))/1000;  //Radius changes so speed changes
-        //Speed is inversely proportional to lives, we want more speed with less lives
+        if(this.iFrames < 1){
+            this.playerLives--;
+            this.playerRadius = this.canvasLength / 60 * Math.sqrt(this.playerLives);
+            this.maxSpeed = Math.round(this.playerRadius * 1000 / this.playerLives / 2) / 1000;  //Radius changes so speed changes
+            this.iFrames = 15;
+        }
     }
     move(){
         this.playerX += this.currentSpeed * Math.cos(Math.PI / 180 * (this.playerRotation - 90));
@@ -106,12 +109,13 @@ class spawner{                                  //The spawner uses the blockUnit
         this.yPos = y;                          //So we need to convert the blockUnit of the spawner to exact when creating new projectiles
         this.radius = r;
         this.spawnCounter = 0;
-        this.spawnDelay = 10;
-        this.patterns = [[0,45,90,135,180,225,270,315], [22, 67, 112, 157, 202, 247, 292, 337]];
+        this.spawnDelay = 20;       //Delay for regulating how often it spawns projectiles
+        this.patterns = [[0,45,90,135,180,225,270,315], [22, 67, 112, 157, 202, 247, 292, 337], [350,355,0,5,10,35,40,45,50,55]];
         this.rotation = 0;
         this.currentPattern = [];
         this.projectiles = projList;
         this.blockUnit = canvasLength / 5;
+        this.pointRate = 10;
     }
     //patterns: wiggle, wave,
 
@@ -133,27 +137,26 @@ class spawner{                                  //The spawner uses the blockUnit
     }
 
     spawn(){
-        if (this.spawnCounter === 10){
-            this.chooseNewPattern()
-            this.spawnCounter = 0;
-        }      //If the current pattern has been finished, it will choose a new pattern
-        this.rotation += Math.floor(Math.random() * 3 - 1) * 5;
+        this.spawnCounter = 0;
+        this.chooseNewPattern();
+        //this.rotation += Math.floor(Math.random() * 3 - 1) * 5; //Creates wiggle effect
 
-        while (this.currentPattern.length > 0){
-            let temp = Math.floor(Math.random() * 20);
-            if (temp < 1){
-                this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern.pop() + this.rotation,this.getRadius()/2,true));
+        let pointWave = Math.floor(Math.random() * this.pointRate);
+        for (let i = 0; i < this.currentPattern.length;i++){
+            if (pointWave < 1){
+                this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern[i] + this.rotation,this.getRadius()/2,true));
             }
             else{
-                this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern.pop() + this.rotation,this.getRadius()/2,false));
+                this.projectiles.push(new projectile(this.getX() * this.blockUnit,this.getY() * this.blockUnit,this.currentPattern[i] + this.rotation,this.getRadius()/2,false));
             }
         }
         this.incrementSpawnCounter();
 
-        console.log("Spawn counter: " + this.spawnCounter)
+        console.log("New wave spawned!");
     }
 
     chooseNewPattern(){
+        this.currentPattern = [];
         let i = Math.floor(Math.random() * this.patterns.length);
         for (let j = 0; j < this.patterns[i].length; j++){
             this.currentPattern.push(this.patterns[i][j]);
@@ -190,7 +193,7 @@ class ballModel {
         this.projectiles = [];
         //new projectile(50,50,90,canvasLength/40, 0)
         this.spawners = [  //Contains all spawner objects
-            new spawner(2.5,2.5,canvasLength / 45, this.projectiles, canvasLength)];
+            new spawner(2.5,2.5,canvasLength / 100, this.projectiles, canvasLength)];
 
         this.lines = [
             0, 5, 5, 5,
@@ -443,5 +446,11 @@ class ballModel {
             projectile.move();
             this.checkOutOfBounds(projectile, index)
         });
+    }
+
+    checkPlayerStatus(){
+        if (this.player1.iFrames > 0){
+            this.player1.iFrames--;
+        }
     }
 }
