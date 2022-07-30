@@ -1,0 +1,32 @@
+body{
+}
+
+button{
+    width: 10%;
+    margin: 2%;
+}
+
+#content{
+}
+
+#nav{
+    width: 12.5%;
+    float: left;
+}
+
+#buttonPanel{
+    float: left;
+}
+
+#buttonPanel->button{
+
+}
+
+#pauseScreen{
+    float: left;
+}
+
+#gamePanel{
+    width: 70%;
+    margin: 1%;
+}

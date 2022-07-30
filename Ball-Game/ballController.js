@@ -27,7 +27,7 @@ const initialise = evt => {
         const displayStats = function () {      //Dev tool which displays stats in realtime for debugging
             return function() {
                 let player1 = model.getPlayer();
-                view.setContent("onscreenconsole2","Lives: " + player1.getLives() + "      Score: " + player1.getScore());
+                view.setContent("onscreenconsole2","Lives: " + player1.getLives() + "                Score: " + player1.getScore());
 /*                view.setContent("statsScreen",
                     "X: " + player1.getX()+ "   "+
                     "Y: " + player1.getY() + "<br>"+
@@ -52,25 +52,29 @@ const initialise = evt => {
             view.updateFrame(model.getPlayer(), model.getLines(), model.getSpawners(), model.getProjectiles());
         };
 
-        view.setupEventHandler("keydown", model.handleKeyDown);
+        view.setupEventHandler("keydown", model.handleKeyDown); //Handles keyboard input
         view.setupEventHandler("keyup", model.handleKeyUp);
 
 
         view.setupButtonHandler("moveUpButton", "mousedown", model.handleUp);
         view.setupButtonHandler("moveUpButton", "touchstart", model.handleUp);
-        view.setupButtonHandler("moveUpButton", "mouseup", model.buttonReleaseY);
+        view.setupButtonHandler("moveUpButton", "touchend", model.handleMoveStop);
+        view.setupButtonHandler("moveUpButton", "mouseup", model.handleMoveStop);
 
         view.setupButtonHandler("moveDownButton", "mousedown", model.handleDown);
-        view.setupButtonHandler("moveDownButton", "touchstart", model.handleDown);
-        view.setupButtonHandler("moveDownButton", "mouseup", model.buttonReleaseY);
+        view.setupButtonHandler("moveDownButton", "touchstart", model.handleDown)
+        view.setupButtonHandler("moveDownButton", "touchend", model.handleMoveStop);
+        view.setupButtonHandler("moveDownButton", "mouseup", model.handleMoveStop);
 
         view.setupButtonHandler("moveLeftButton", "mousedown", model.handleLeft);
         view.setupButtonHandler("moveLeftButton", "touchstart", model.handleLeft);
-        view.setupButtonHandler("moveLeftButton", "mouseup", model.buttonReleaseX);
+        view.setupButtonHandler("moveLeftButton", "touchend", model.handleRotateStop);
+        view.setupButtonHandler("moveLeftButton", "mouseup", model.handleRotateStop);
 
         view.setupButtonHandler("moveRightButton", "mousedown", model.handleRight);
         view.setupButtonHandler("moveRightButton", "touchstart", model.handleRight);
-        view.setupButtonHandler("moveRightButton", "mouseup", model.buttonReleaseX);
+        view.setupButtonHandler("moveRightButton", "touchend", model.handleRotateStop);
+        view.setupButtonHandler("moveRightButton", "mouseup", model.handleRotateStop);
 
 
         let gameLoopID = setInterval(gameLoop, 20);       //This checks for collisions and updates the screen at (roughly) 50 frames a second

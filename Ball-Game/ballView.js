@@ -5,15 +5,17 @@ class ballView {
         let currentPage = this.getCurrentPage().split('/');//This checks if the user is on the homepage
         let pageName = currentPage.pop();                         //Which only needs some buttons to be setup
         if (pageName === "ballGame.html") {
-            document.getElementById("pauseScreen").style.display = 'none';
             this.canvas = document.getElementById("gameCanvas");
             this.canvasLength = 0;                                  //This value is used for calculating how big everything should appear on the screen
             if (window.innerWidth > window.innerHeight) {
                 this.canvasLength = window.innerHeight;
+                document.getElementById("horizontalCSS").media = '';    //If the phone is held horizontally, a different stylesheet is used to optimise space
+                this.canvasLength *= 0.75;
             } else {
                 this.canvasLength = window.innerWidth;
+                document.getElementById("horizontalCSS").media = 'none';
+                this.canvasLength *= 0.9;                               //This ensures the whole canvas fits onscreen (phone cameras ect)
             }
-            this.canvasLength *= 0.9;                               //This ensures the whole canvas fits onscreen (phone cameras ect)
             this.canvas.width = this.canvasLength;
             this.canvas.height = this.canvasLength;
             this.context = this.canvas.getContext("2d");
@@ -147,12 +149,10 @@ class ballView {
     }
 
     pauseGame(){
-        document.getElementById("gamePanel").style.display = 'none';
         document.getElementById("pauseScreen").style.display = 'block';
     }
 
     resumeGame(){
-        document.getElementById("gamePanel").style.display = 'block';
         document.getElementById("pauseScreen").style.display = 'none';
     }
 }

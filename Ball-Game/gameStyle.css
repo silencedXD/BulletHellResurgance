@@ -13,24 +13,57 @@ body{
     margin: 0;
 }
 
-
 button{
     height: 8vmin;
     width: 15vmin;
+    margin: 2% 3%;
+}
+
+#content{
+    height: 100%;
+    width: 100%;
+}
+
+#gamePanel{
+    margin: 0 3%;
 }
 
 #onscreenconsole2{
-    margin: 0;
+    height: 10%;
+    margin: 3%;
 }
 #statsScreen{
     font-size: 80%;
 }
 
-#replayBallGame{
-    height: 8vmin;
-    width: 15vmin;
+#nav{
+    display: inline;
+    height: 10%;
+    width: 100%;
+}
+
+#nav > * {
+    width: 25%;
+    margin: 3%;
+}
+
+#buttonPanel{
+    height: 30%;
+    width: 100%;
+    float: left;
+}
+
+#buttonPanel > button{
+    width: 45%;
+    height: 20%;
+    margin: 1% 2%;
 }
 
 #ballWinScreen{
     font-size: 300%;
+}
+
+#pauseScreen{
+    display: none;
+    margin: 3%;
 }

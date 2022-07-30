@@ -18,6 +18,8 @@ class player{
         this.decayRate = this.playerRadius / 25;
         this.playerScore = 0;
         this.iFrames = 0;
+        this.rotateFlag = 0;
+        this.moveFlag = 0;
     }
 
     getLives(){return this.playerLives;}
@@ -33,13 +35,15 @@ class player{
     getRadius(){return this.playerRadius;}
     isEnemy(){return false;}
     getSpeed(){return this.currentSpeed;}
+    getMoveFlag(){return this.moveFlag;}
+    getRotateFlag(){return this.rotateFlag;}
 
     setX(x){this.playerX = x;}
     setY(y){this.playerY = y;}
     setMomentum(m){this.playerMomentum = m;}
     takeDamage(){
         if(this.iFrames < 1){
-            this.playerLives--;
+            //this.playerLives--;
             this.playerRadius = this.canvasLength / 100 * Math.sqrt(this.playerLives);
             this.maxSpeed = Math.round(this.playerRadius * 1000 / this.playerLives / 1.5) / 1000;  //Radius changes so speed changes
             this.iFrames = 15;
@@ -81,6 +85,7 @@ class player{
         else {
             this.playerRotation = 360 + this.playerRotation - this.rotationFactor;
         }
+        this.rotateFlag = 0;
     }
 
     rotateRight(){
@@ -91,6 +96,7 @@ class player{
         else {
             this.playerRotation = this.playerRotation + this.rotationFactor - 360;
         }
+        this.rotateFlag = 0;
     }
 
     pushUp(){
@@ -99,6 +105,14 @@ class player{
 
     pushDown(){
         this.playerMomentum = -1;
+    }
+
+    setMoveFlag(x){
+        this.moveFlag = x;
+    }
+
+    setRotateFlag(x){
+        this.rotateFlag = x;
     }
 }
 
@@ -227,21 +241,21 @@ class ballModel {
         //This is so the same functions can be mapped to keys as well as to button presses to facilitate cross-platform support
 
         this.turnLeft = (player) => {
-            player.rotateLeft();
+            player.setRotateFlag(-1);
             console.log("Rotation: "+player.getRotation());
         };
 
         this.turnRight = (player) => {
-            player.rotateRight();
+            player.setRotateFlag(1);
             console.log("Rotation: "+player.getRotation());
         };
 
         this.pushUp = (player) => {
-            player.pushUp();
+            player.setMoveFlag(1);
         };
 
         this.pushDown = (player) => {
-            player.pushDown();
+            player.setMoveFlag(-1);
         };
 
 
@@ -253,6 +267,7 @@ class ballModel {
             this.keys[event.keyCode] = false;
             if (event.keyCode === 87 || event.keyCode === 83){
                 this.player1.setMomentum(0);
+                this.player1.setMoveFlag(0);
             }
         };
         this.handleUp = () => {
@@ -263,6 +278,11 @@ class ballModel {
             console.log("Down button Pressed!");
             this.pushDown(this.player1);
         };
+        this.handleMoveStop = () => {
+            console.log("Move released!");
+            this.player1.setMoveFlag(0);
+        }
+
         this.handleLeft = () => {
             console.log("Left button Pressed!");
             this.turnLeft(this.player1);
@@ -271,6 +291,11 @@ class ballModel {
             console.log("Right button Pressed!");
             this.turnRight(this.player1);
         };
+        this.handleRotateStop = () => {
+            console.log("Rotate released!");
+            this.player1.setRotateFlag(0);
+        }
+
         this.buttonReleaseX = () => {
             console.log("ButtonX released");
         };
@@ -442,6 +467,22 @@ class ballModel {
             console.log("D pressed!");
             this.turnRight(this.player1);
         }
+        if (this.player1.getMoveFlag() === -1){
+            this.player1.pushDown();
+        }
+        if (this.player1.getMoveFlag() === 1){
+            this.player1.pushUp();
+        }
+        if (this.player1.getMoveFlag() === 0){
+            this.player1.setMomentum(0);
+        }
+        if (this.player1.getRotateFlag() === -1){
+            this.player1.rotateLeft();
+        }
+        if (this.player1.getRotateFlag() === 1){
+            this.player1.rotateRight();
+        }
+
     }
 
     checkSpawners(){
