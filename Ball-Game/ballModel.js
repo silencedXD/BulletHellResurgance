@@ -43,7 +43,7 @@ class player{
     setMomentum(m){this.playerMomentum = m;}
     takeDamage(){
         if(this.iFrames < 1){
-            //this.playerLives--;
+            this.playerLives--;
             this.playerRadius = this.canvasLength / 100 * Math.sqrt(this.playerLives);
             this.maxSpeed = Math.round(this.playerRadius * 1000 / this.playerLives / 1.5) / 1000;  //Radius changes so speed changes
             this.iFrames = 15;
@@ -121,7 +121,7 @@ class spawner{                                  //The spawner uses the blockUnit
         this.yPos = y;                          //So we need to convert the blockUnit of the spawner to exact when creating new projectiles
         this.radius = r;
         this.spawnCounter = 0;
-        this.spawnDelay = 25;       //Delay for regulating how often it spawns projectiles
+        this.spawnDelay = 30;       //Delay for regulating how often it spawns projectiles
         this.patterns = [
                         [0,90,180,270],                                //4 points 90 degrees apart starting at 0
                         [45,135,225,315],                              //4 points 90 degrees apart starting at 45
@@ -210,8 +210,8 @@ class projectile{
     setX(x){this.xPos = x;}
     setY(y){this.yPos = y;}
     move(){
-        this.xPos += this.radius/2 * Math.cos(Math.PI / 180 * (this.direction - 90));
-        this.yPos += this.radius/2 * Math.sin(Math.PI / 180 * (this.direction - 90));
+        this.xPos += this.radius/3 * Math.cos(Math.PI / 180 * (this.direction - 90));
+        this.yPos += this.radius/3 * Math.sin(Math.PI / 180 * (this.direction - 90));
     }
 }
 
