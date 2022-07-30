@@ -1,0 +1,29 @@
+*{
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body{
+    margin: 2%;
+}
+
+#content{
+    height: 100%;
+    width: 100%;
+}
+
+#ballButton{
+    height: 40%;
+}
+
+button{
+    background-color: red;
+    width: 30%;
+    height: 30%;
+}

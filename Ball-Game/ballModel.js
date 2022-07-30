@@ -267,6 +267,9 @@ class ballModel {
                 this.player1.setMomentum(0);
                 this.player1.setMoveFlag(0);
             }
+            if (event.keyCode === 68 || event.keyCode === 65){
+                this.player1.setRotateFlag(0);
+            }
         };
         this.handleUp = () => {
             console.log("Up button Pressed!");
