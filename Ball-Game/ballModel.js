@@ -85,7 +85,6 @@ class player{
         else {
             this.playerRotation = 360 + this.playerRotation - this.rotationFactor;
         }
-        this.rotateFlag = 0;
     }
 
     rotateRight(){
@@ -96,7 +95,6 @@ class player{
         else {
             this.playerRotation = this.playerRotation + this.rotationFactor - 360;
         }
-        this.rotateFlag = 0;
     }
 
     pushUp(){
@@ -242,12 +240,12 @@ class ballModel {
 
         this.turnLeft = (player) => {
             player.setRotateFlag(-1);
-            console.log("Rotation: "+player.getRotation());
+            //console.log("Rotation: "+player.getRotation());
         };
 
         this.turnRight = (player) => {
             player.setRotateFlag(1);
-            console.log("Rotation: "+player.getRotation());
+            //console.log("Rotation: "+player.getRotation());
         };
 
         this.pushUp = (player) => {
@@ -296,12 +294,6 @@ class ballModel {
             this.player1.setRotateFlag(0);
         }
 
-        this.buttonReleaseX = () => {
-            console.log("ButtonX released");
-        };
-        this.buttonReleaseY = () => {
-            console.log("ButtonY released");
-        };
     }
 
     getLines(){
@@ -314,30 +306,6 @@ class ballModel {
 
     getPlayer(){
         return this.player1;
-    }
-
-    getBallX(){
-        return this.playerX;
-    }
-
-    getBallY(){
-        return this.playerY;
-    }
-
-    getBallR(){
-        return this.playerRotation;
-    }
-
-    getSpeed(){
-        return this.currentSpeed;
-    }
-
-    getMomentum(){
-        return this.playerMomentum;
-    }
-
-    getScore(){
-        return this.playerScore;
     }
 
     getProjectiles(){
@@ -451,7 +419,7 @@ class ballModel {
     }
 
     checkKeyInputs(){
-        if (this.keys && this.keys[87]) {
+        if (this.keys && this.keys[87]) {   //Checking for key inputs
             console.log("W pressed!");
             this.pushUp(this.player1);
         }
@@ -467,7 +435,9 @@ class ballModel {
             console.log("D pressed!");
             this.turnRight(this.player1);
         }
-        if (this.player1.getMoveFlag() === -1){
+
+
+        if (this.player1.getMoveFlag() === -1){     //Checking for button inputs
             this.player1.pushDown();
         }
         if (this.player1.getMoveFlag() === 1){
