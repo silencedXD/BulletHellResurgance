@@ -149,7 +149,7 @@ class ballView {
     }
 
     pauseGame(){
-        document.getElementById("pauseScreen").style.display = 'block';
+        document.getElementById("pauseScreen").style.display = 'inline';
     }
 
     resumeGame(){

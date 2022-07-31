@@ -27,7 +27,7 @@ const initialise = evt => {
         const displayStats = function () {      //Dev tool which displays stats in realtime for debugging
             return function() {
                 let player1 = model.getPlayer();
-                view.setContent("onscreenconsole2","Lives: " + player1.getLives() + "                Score: " + player1.getScore());
+                view.setContent("livesAndScore","Lives: " + player1.getLives() + "                Score: " + player1.getScore());
 /*                view.setContent("statsScreen",
                     "X: " + player1.getX()+ "   "+
                     "Y: " + player1.getY() + "<br>"+
