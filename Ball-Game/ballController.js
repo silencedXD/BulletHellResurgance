@@ -24,7 +24,7 @@ const initialise = evt => {
         });
 
 
-        const displayStats = function () {      //Dev tool which displays stats in realtime for debugging
+        const displayStats = function () {                      //Dev tool which displays stats in realtime for debugging
             return function() {
                 let player1 = model.getPlayer();
                 view.setContent("livesAndScore","Lives: " + player1.getLives() + "                Score: " + player1.getScore());
@@ -43,20 +43,21 @@ const initialise = evt => {
 
 
         const gameLoop = function () {
+
             model.checkKeyInputs();
             model.checkMovement(model.getPlayer());
             model.checkPlayerStatus();
             model.checkSpawners();
             model.checkProjectiles();
             model.checkCollisions(view);
+
             view.updateFrame(model.getPlayer(), model.getLines(), model.getSpawners(), model.getProjectiles());
         };
 
-        view.setupEventHandler("keydown", model.handleKeyDown); //Handles keyboard input
+        view.setupEventHandler("keydown", model.handleKeyDown);                         //Handles keyboard input
         view.setupEventHandler("keyup", model.handleKeyUp);
 
-
-        view.setupButtonHandler("moveUpButton", "mousedown", model.handleUp);
+        view.setupButtonHandler("moveUpButton", "mousedown", model.handleUp);       //This covers input from a keyboard as well as touch input
         view.setupButtonHandler("moveUpButton", "touchstart", model.handleUp);
         view.setupButtonHandler("moveUpButton", "touchend", model.handleMoveStop);
         view.setupButtonHandler("moveUpButton", "mouseup", model.handleMoveStop);
@@ -84,7 +85,9 @@ const initialise = evt => {
             view.pauseGame();
             localStorage.pauseFlag = 1;
         };
+
         localStorage.pauseFlag = 0;
+
         const resumeGame = function(){
             if (localStorage.pauseFlag === "1") {
                 statDisplayID = setInterval(displayStats(), 1);
@@ -93,11 +96,11 @@ const initialise = evt => {
                 localStorage.pauseFlag = 0;
             }
         };
+
         view.setupButtonHandler('pauseButton', "click", pauseGame);
 
         view.setupButtonHandler('resumeButton', "click", resumeGame);
     }
 };
 
-window.addEventListener("pageshow", initialise);
-
+window.addEventListener("pageshow", initialise);    //This ensures the page and all html elements have been loaded before everything else is initialised

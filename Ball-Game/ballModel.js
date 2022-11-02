@@ -26,21 +26,18 @@ class player{
     getX(){return this.playerX;}
     getY(){return this.playerY;}
     getRotation(){return this.playerRotation;}
-    getRotationFactor(){return this.rotationFactor;}
-    getMomentum(){return this.playerMomentum;}
-    getMoveFactor(){return this.moveFactor;}
     getMaxSpeed(){return this.maxSpeed;}
-    getDecayRate(){return this.decayRate;}
     getScore(){return this.playerScore;}
     getRadius(){return this.playerRadius;}
-    isEnemy(){return false;}
     getSpeed(){return this.currentSpeed;}
     getMoveFlag(){return this.moveFlag;}
     getRotateFlag(){return this.rotateFlag;}
+    isEnemy(){return false;}
 
     setX(x){this.playerX = x;}
     setY(y){this.playerY = y;}
     setMomentum(m){this.playerMomentum = m;}
+
     takeDamage(){
         if(this.iFrames < 1){
             this.playerLives--;
@@ -49,10 +46,12 @@ class player{
             this.iFrames = 15;
         }
     }
+
     move(){
         this.playerX += this.currentSpeed * Math.cos(Math.PI / 180 * (this.playerRotation - 90));
         this.playerY += this.currentSpeed * Math.sin(Math.PI / 180 * (this.playerRotation - 90));
     }
+
     decaySpeed(){
         if (this.currentSpeed > this.maxSpeed / 10) {
             this.currentSpeed -= this.decayRate;
@@ -63,6 +62,7 @@ class player{
             this.currentSpeed = 0;
         }
     }
+
     updateSpeed(){
         this.currentSpeed += this.playerMomentum * this.moveFactor;
         if (this.currentSpeed > this.maxSpeed){
@@ -118,33 +118,30 @@ class player{
 class spawner{                                  //The spawner uses the blockUnit coordinate system, this splits the canvas into a 5x5 grid
     constructor(x,y,r,projList,canvasLength) {  //This makes it easy to place a spawner in a specific spot on the screen regardless of resolution
         this.xPos = x;                          //However projectiles will use the exact coordinates like the player due to their movement
-        this.yPos = y;                          //So we need to convert the blockUnit of the spawner to exact when creating new projectiles
+        this.yPos = y;                          //So we need to convert the blockUnit of the spawner to screen units when creating new projectiles
         this.radius = r;
         this.spawnCounter = 0;
         this.spawnDelay = 30;       //Delay for regulating how often it spawns projectiles
-        this.patterns = [
-                        [0,90,180,270],                                //4 points 90 degrees apart starting at 0
-                        [45,135,225,315],                              //4 points 90 degrees apart starting at 45
-                        [0,45,90,135,180,225,270,315],                 //8 points 45 degrees apart starting at 0
-                        [22,112,202,292],                              //4 points 90 degrees apart starting at 22
-                        [67,157,247,337],                              //4 points 90 degrees apart starting at 67
-                        [22,67,112,157,202,247,292,337],               //8 points 45 degrees apart starting at 22
-                        [355,0,5,40,45,50,85,90,95,130,135,140,175,180,185,220,225,230,265,270,275,310,315,320],
-                        //Wave of 3 each 45 degrees apart starting at 0
-                        [350,355,0,5,10,35,40,45,50,55,80,85,90,95,100,125,130,135,140,145,170,175,180,185,190,215,220,225,230,235,260,265,270,275,280,305,310,315,320,325],
-                        //Wave of 5 each 45 degrees apart starting at 0
-                        [17,22,27,62,67,72,107,112,117,152,157,162,197,202,207,242,247,252,287,292,297,332,337,342],
-                        //Wave of 3 each 45 degrees apart starting at 22
-                        [12,17,22,27,32,57,62,67,72,77,102,107,112,117,122,147,152,157,162,167,192,197,202,207,212,237,242,247,252,257,282,287,292,297,302,327,332,337,342,347]
-                        //Wave of 5 each 45 degrees apart starting at 22
-        ];
+
+        this.patterns = [];
+        this.patterns.push(this.makeWiggle(0,90,4));                            //4 point wiggle 90 degrees apart starting at 0
+        this.patterns.push(this.makeWiggle(45,90,4));                           //4 point wiggle 90 degrees apart starting at 45
+        this.patterns.push(this.makeWiggle(0,45,8));                            //8 point wiggle 45 degrees apart starting at 0
+        this.patterns.push(this.makeWiggle(22,90,4));                           //4 point wiggle 90 degrees apart starting at 22
+        this.patterns.push(this.makeWiggle(67,90,4));                           //4 point wiggle 90 degrees apart starting at 67
+        this.patterns.push(this.makeWiggle(22,45,8));                           //8 point wiggle 45 degrees apart starting at 22*!/
+        this.patterns.push(this.makeWave(0,45,8,10,3));  //Wave of 3 each 45 degrees apart starting at 0
+        this.patterns.push(this.makeWave(0,45,8,10,5));  //Wave of 5 each 45 degrees apart starting at 0
+        this.patterns.push(this.makeWave(22,45,8,10,3)); //Wave of 3 each 45 degrees apart starting at 22
+        this.patterns.push(this.makeWave(22,45,8,10,5)); //Wave of 5 each 45 degrees apart starting at 22
+
         this.rotation = 0;
         this.currentPattern = [];
         this.projectiles = projList;
         this.blockUnit = canvasLength / 5;
         this.pointRate = 10;
     }
-    //patterns: wiggle, wave,
+    //patterns: wiggle and wave
 
     getX(){return this.xPos;}
     getY(){return this.yPos;}
@@ -155,12 +152,9 @@ class spawner{                                  //The spawner uses the blockUnit
 
     setX(x){this.xPos = x;}
     setY(y){this.yPos = y;}
-    setRadius(r){this.radius = r;}
-    setSpawnDelay(x){this.spawnDelay = x;}
 
     incrementSpawnCounter(){
         this.spawnCounter++;
-        //console.log("Spawn counter: " + this.spawnCounter)
     }
 
     spawn(){
@@ -180,6 +174,41 @@ class spawner{                                  //The spawner uses the blockUnit
         this.incrementSpawnCounter();
 
         console.log("New wave spawned!");
+    }
+
+    makeWiggle(start, interval, totalPoints){
+        let newWiggle = [start];
+        let pointCount = 1;
+        let currentPoint = start;
+
+        while(pointCount < totalPoints){
+            currentPoint += interval;
+            newWiggle.push(currentPoint);
+            pointCount++;
+        }
+        return newWiggle;
+    }
+
+    makeWave(start, interval, totalWaves, interWaveRange, interWaveSize){
+        let newWave = [];
+        let waveCount = 0;
+        let currentPoint = start;
+        let waveIncrement = (interWaveRange * 2) / interWaveSize;
+
+        while (waveCount < totalWaves){
+            let currentWavePoint = currentPoint - (interWaveRange)  //'left' most point of a wave
+            newWave.push(currentWavePoint)
+            let pointCount = 1;
+
+            while(pointCount < interWaveSize){
+                currentWavePoint += waveIncrement;
+                newWave.push(currentWavePoint);
+                pointCount++;
+            }
+            currentPoint += interval;
+            waveCount++;
+        }
+        return newWave;
     }
 
     chooseNewPattern(){
@@ -218,7 +247,7 @@ class projectile{
 class ballModel {
     constructor(canvasLength) {
         this.projectiles = [];
-        //new projectile(50,50,90,canvasLength/40, 0)
+
         this.spawners = [  //Contains all spawner objects
             new spawner(2.5,2.5,canvasLength / 100, this.projectiles, canvasLength)];
 
@@ -240,12 +269,10 @@ class ballModel {
 
         this.turnLeft = (player) => {
             player.setRotateFlag(-1);
-            //console.log("Rotation: "+player.getRotation());
         };
 
         this.turnRight = (player) => {
             player.setRotateFlag(1);
-            //console.log("Rotation: "+player.getRotation());
         };
 
         this.pushUp = (player) => {
@@ -327,7 +354,9 @@ class ballModel {
         for (let i = 0; i < this.spawners.length; i++) {
             let holeX = this.spawners[i].getX() * view.getBlockUnit();
             let holeY = this.spawners[i].getY() * view.getBlockUnit();
-            let distance_between_centres = Math.sqrt((this.player1.getX() - holeX) * (this.player1.getX() - holeX) + (this.player1.getY() - holeY) * (this.player1.getY()- holeY));
+            let xDif = this.player1.getX() - holeX;
+            let yDif = this.player1.getY() - holeY;
+            let distance_between_centres = Math.sqrt((xDif * xDif) + (yDif * yDif));
             let sum_of_radii = this.player1.getRadius() + this.spawners[i].getRadius();
             if (distance_between_centres <= sum_of_radii) {
                 if (this.player1.getLives() > 1){this.player1.takeDamage();}
@@ -343,8 +372,11 @@ class ballModel {
 
         for (let i = 0; i < this.projectiles.length; i++){
             let proj = this.projectiles[i];
-            let distance_between_centres = Math.sqrt((this.player1.getX() - proj.getX()) * (this.player1.getX() - proj.getX()) + (this.player1.getY() - proj.getY()) * (this.player1.getY() - proj.getY()));
+            let xDif = this.player1.getX() - proj.getX();
+            let yDif = this.player1.getY() - proj.getY();
+            let distance_between_centres = Math.sqrt((xDif * xDif) + (yDif * yDif));
             let sum_of_radii = this.player1.getRadius() + proj.getRadius();
+
             if (distance_between_centres <= sum_of_radii) {
                 if (proj.isPoint()) {
                     this.player1.addPoint();
@@ -403,7 +435,6 @@ class ballModel {
                 this.projectiles.splice(index,1);
             }
         }
-
 
         else {  //Object is a player
             if (obj.getX() < 0) {

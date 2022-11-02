@@ -21,7 +21,6 @@ class ballView {
             this.context = this.canvas.getContext("2d");
             this.context.lineWidth = 4;
             this.blockUnit = this.canvasLength / 5;                 //This is a unit that divides the canvas into 5, used for custom coordinates for drawing
-            this.holeRadius = this.canvasLength / 37;
 
         }
     }
@@ -32,10 +31,6 @@ class ballView {
 
     getBlockUnit(){
         return this.blockUnit;
-    }
-
-    getHoleRadius(){
-        return this.holeRadius;
     }
 
     setupButtonHandler(id, type, handler){
@@ -70,28 +65,24 @@ class ballView {
         let car = new Image();
         car.src="car.png";
 
-        let carSF = player1.getRadius() / 10;
-        //let carSF = this.canvasLength/4000;
-        //let carSF = this.canvasLength/3000;
+        let carSF = player1.getRadius() / 10;   //Player size scales with how many lives they have
 
+        let centreX = car.width/2;
+        let centreY = car.height/2;
 
-        //let carSF = this.canvasLength/5000 * player1.getRadius(); //Player size scales with how many lives they have
-        let centreX = car.width/2;//1 life = 7500, 2 lives = 5000, 3 lives = 2500
-        let centreY = car.height/2;//1 life = 5000, 2 lives = 2500, 3 lives =
-
-        this.context.save();                    //Default is saved
-        this.context.translate(player1.getX(), player1.getY());           //Canvas is moved to player position
-        this.context.rotate(Math.PI/180 * player1.getRotation());   //Canvas is rotated
-        this.context.scale(carSF,carSF); //Canvas is scaled to size of the player
+        this.context.save();                                                    //Default is saved
+        this.context.translate(player1.getX(), player1.getY());                 //Canvas is moved to player position
+        this.context.rotate(Math.PI/180 * player1.getRotation());               //Canvas is rotated
+        this.context.scale(carSF,carSF);                                        //Canvas is scaled to size of the player
         this.context.drawImage(car, -centreX, -centreY, car.width, car.height);
-        this.context.restore();                 //Transformations are reset to default
+        this.context.restore();                                                 //Transformations are reset to default
 
 /*        this.context.fillStyle = "#00FF00";
         this.context.beginPath();
         this.context.arc(player1.getX(), player1.getY(), player1.getRadius(), 0, 2 * Math.PI);   //Draws ball
         this.context.fill();
         this.context.strokeStyle = "#33DD33";
-        this.context.stroke();*/        //This draws a ball using the player's radius, displays player hitbox
+        this.context.stroke();*/        //This draws a ball using the player's radius, displays player hitbox which is useful for testing
 
         this.drawEnemies(spawners, projectiles)
 
@@ -104,13 +95,14 @@ class ballView {
 
 
         //All of the projectile spawners are stored in an array of spawner objects, the same is true for projectiles
-        for (let i = 0; i < spawners.length; i++) {    //This adds the projectile spawners
+
+        for (let i = 0; i < spawners.length; i++) {       //This draws the projectile spawners
             this.drawHole(spawners[i].getX(), spawners[i].getY(), spawners[i].getRadius());
         }
 
 
 
-        for (let i = 0; i < projectiles.length; i++) {    //This adds the projectile spawners
+        for (let i = 0; i < projectiles.length; i++) {    //This draws the projectiles
             if (projectiles[i].isPoint()){
                 this.context.fillStyle = "#22AA22";
                 this.context.strokeStyle = "#009900";
@@ -126,7 +118,7 @@ class ballView {
                 this.drawHole(spawners[spawners.length-2], spawners[spawners.length-1]);    */                   //This adds the goal hole
     }
 
-    drawBackground(lines, spawners){
+    drawBackground(lines){
         //All the walls are stored in an array as 4 coordinates, this adds all of them to the canvas
         for (let i = 0; i < lines.length; i += 4) {
             this.drawLine(lines[i], lines[i + 1], lines[i + 2], lines[i + 3]);
