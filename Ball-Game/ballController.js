@@ -13,7 +13,7 @@ const initialise = evt => {
 
     let currentPage = view.getCurrentPage().split('/');//This checks if the user is on the homepage
     let pageName = currentPage.pop();                         //Which only needs some buttons to be setup
-    if (pageName === "ballGameHome.html") {
+    if (pageName === "index.html") {
         view.setupButtonHandler('ballButton',"click", () => {
             view.goTo(" ballGame.html");
         });
